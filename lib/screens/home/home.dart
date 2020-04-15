@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:library_application_mobile/models/user.dart';
 import 'package:library_application_mobile/models/user_info.dart';
+import 'package:library_application_mobile/models/favorite_books.dart';
 import 'package:library_application_mobile/shared/loading.dart';
 import 'package:library_application_mobile/shared/globals.dart' as globals;
 import 'package:provider/provider.dart';
@@ -50,11 +50,11 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           child: Row(
             children: <Widget>[
               Text(
-                'Logged in as',
-                style: globals.ts(18.0, Colors.black, FontWeight.w400),
+                globals.currentUser.email,
+                style: globals.ts(15.0, Colors.black, FontWeight.w400),
               ),
               SizedBox(width: 10),
-              globals.styledRaisedButton("Logout", 18.0, Colors.blue, Colors.white, () {}),
+              globals.styledRaisedButton("Logout", 18.0, Colors.green, Colors.white, () {}),
             ],
           ),
         ),
@@ -97,11 +97,12 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     super.initState();
     genreList = getGenreList(globals.books);
     _selectedGenre = genreList[0];  //forced to the first element
+    globals.currentUser = globals.getCurrentUserInfo();
+    globals.favoriteBook = globals.getFavoriteBooks(globals.currentUser);
   }
 
   @override
   Widget build(BuildContext context) {
-    // User user = Provider.of<User>(context);
     globals.setPortrait();
 
     return MaterialApp(

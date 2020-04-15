@@ -1,22 +1,25 @@
 class UserInfo {
-  final String uid;
-  final String email;
-  final String gender;
-  final int age;
-  final String phoneno;
-  final String selfIntro;
-  final bool pro;
-  final double latitude;
-  final double longitude;
+  int id;
+  String name;
+  String email;
+  String employee_number;
+  bool eomployee_role;
+  bool user_role;
 
   UserInfo(
-      {this.uid,
+      {this.id,
+      this.name,
       this.email,
-      this.gender,
-      this.age,
-      this.phoneno,
-      this.selfIntro,
-      this.pro,
-      this.latitude,
-      this.longitude});
+      this.employee_number,
+      this.eomployee_role,
+      this.user_role,});
+
+  UserInfo.fromJson(Map json){
+    this.id = json["id"];
+    this.name = json ["name"];
+    this.email = json ["email"];
+    this.employee_number = json ["employee_number"];
+    this.eomployee_role = json ["eomployee_role"];
+    this.user_role= json["user_role"];
+  }
 }

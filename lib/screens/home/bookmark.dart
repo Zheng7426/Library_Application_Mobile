@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:library_application_mobile/models/user.dart';
 import 'package:library_application_mobile/models/user_info.dart';
 import 'package:library_application_mobile/shared/loading.dart';
 import 'package:library_application_mobile/shared/globals.dart' as globals;

@@ -1,29 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:library_application_mobile/models/user.dart';
-import 'package:library_application_mobile/models/user_info.dart';
+import 'package:library_application_mobile/models/book_info.dart';
 import 'package:library_application_mobile/shared/loading.dart';
 import 'package:library_application_mobile/shared/globals.dart' as globals;
 import 'package:provider/provider.dart';
 import 'package:library_application_mobile/helper/call_no.dart';
 
-class BookDetails extends StatefulWidget {
+class BookDetailsPage extends StatefulWidget {
+  final BookInfo bookInfo;
+  BookDetailsPage({Key key, @required this.bookInfo}) : super(key: key);
+
   @override
-  _BookDetailsState createState() => _BookDetailsState();
+  BookDetailsPageState createState() => BookDetailsPageState();
 }
 
-class _BookDetailsState extends State<BookDetails> with SingleTickerProviderStateMixin {
-  TabController _tabController;
+class BookDetailsPageState extends State<BookDetailsPage> with SingleTickerProviderStateMixin {
 
   @override
   void initState() {
     super.initState();
-    _tabController = new TabController(vsync: this, length: 2);
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
   }
 
   @override

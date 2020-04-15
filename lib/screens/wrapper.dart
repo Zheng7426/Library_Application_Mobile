@@ -1,4 +1,3 @@
-import 'package:library_application_mobile/models/user.dart';
 import 'package:library_application_mobile/screens/authenticate/authenticate.dart';
 import 'package:library_application_mobile/screens/home/home.dart';
 import 'package:flutter/material.dart';

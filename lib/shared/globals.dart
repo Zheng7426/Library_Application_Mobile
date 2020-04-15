@@ -2,10 +2,15 @@ library library_application_mobile.globals;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:library_application_mobile/models/user_info.dart';
+import 'package:library_application_mobile/models/favorite_books.dart';
 
 final String emailDomain = '@kts.com';
 final String libraryApplicationUrl =
     'https://my.api.mockaroo.com/popularity.json?key=da404bc0';
+
+UserInfo currentUser = null;
+FavoriteBooks favoriteBook = null;
 
 final int color1 = 0xFF295A8D;
 final int color3 = 0xFF92AE85;
@@ -72,7 +77,8 @@ void showMessageDialog(BuildContext context, String msg) {
                   SizedBox(
                     width: 100.0,
                     child: styledRaisedButton(
-                      'OK',18.0,
+                      'OK',
+                      18.0,
                       Colors.blue,
                       Colors.white,
                       () {
@@ -248,3 +254,28 @@ List<Map<String, dynamic>> books = [
     "isbn": '9781473567221',
   },
 ];
+
+Map<String, dynamic> currentUserJson = {
+  "id": 2,
+  "name": "Ken",
+  "email": "kts@kts.com",
+  "employee_number": "",
+  "eomployee_role": false,
+  "user_role": true,
+};
+
+Map<String, dynamic> favoriteBookListJson = {
+  "user_id": 2,
+  "book_list": [3, 5, 7, 9],
+};
+
+UserInfo getCurrentUserInfo() {
+  return UserInfo.fromJson(currentUserJson);
+}
+
+FavoriteBooks getFavoriteBooks(UserInfo ui) {
+  Map<String, dynamic> bookList = favoriteBookListJson;
+  return (ui.id == bookList["user_id"])
+      ? FavoriteBooks.fromJson(bookList)
+      : null;
+}
