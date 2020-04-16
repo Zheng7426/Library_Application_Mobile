@@ -7,6 +7,27 @@ import 'package:library_application_mobile/models/comment.dart';
 import 'package:library_application_mobile/models/book_info.dart';
 
 class Library {
+
+  static String addTzToStoreFormat(String dateTimeString) {
+    String newDateTimeString = dateTimeString.replaceFirst(' ', 'T')+'Z';
+    return newDateTimeString;
+  }
+
+  static String getCurrentTime() {
+    DateTime now = DateTime.now();
+    return addTzToStoreFormat(globals.storeDateFormat.format(now));
+  }
+
+  static String convertDateTimeStoreToDisplay(String dt) {
+    DateTime dateTime = DateTime.parse(dt);
+    return globals.displayDateFormat.format(dateTime);
+  }
+
+  static String convertDateTimeDisplaytoStore(String dt) {
+    DateTime dateTime = DateTime.parse(dt);
+    return globals.storeDateFormat.format(dateTime);
+  }
+
   static UserInfo getCurrentUserInfo() {
     return UserInfo.fromJson(test_data.currentUserJson);
   }

@@ -7,10 +7,14 @@ import 'package:library_application_mobile/models/favorite_books.dart';
 import 'package:library_application_mobile/models/comments.dart';
 import 'package:library_application_mobile/models/comment.dart';
 import 'package:library_application_mobile/models/book_info.dart';
+import 'package:intl/intl.dart';
 
 final String emailDomain = '@kts.com';
 final String libraryApplicationUrl =
     'https://my.api.mockaroo.com/popularity.json?key=da404bc0';
+
+final displayDateFormat = DateFormat('yyyy-MM-dd hh:mm:ss');
+final storeDateFormat = DateFormat('yyyy-MM-dd hh:mm:ss.sss');
 
 UserInfo currentUser = null;
 FavoriteBooks favoriteBooks = null;

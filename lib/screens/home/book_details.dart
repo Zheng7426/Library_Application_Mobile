@@ -6,6 +6,7 @@ import 'package:library_application_mobile/shared/loading.dart';
 import 'package:library_application_mobile/shared/globals.dart' as globals;
 import 'package:provider/provider.dart';
 import 'package:library_application_mobile/helper/library.dart';
+import 'package:intl/intl.dart';
 
 class BookDetailsPage extends StatefulWidget {
   final BookInfo bookInfo;
@@ -108,7 +109,10 @@ class BookDetailsPageState extends State<BookDetailsPage> {
                   "Add Note", 15.0, Colors.blue, Colors.white, () {
                 setState(() {
                   _comment = Comment.construct(
-                      _addTitleController.text, _addNoteController.text);
+                    _addTitleController.text,
+                    _addNoteController.text,
+                    Library.getCurrentTime(),
+                  );
                   comments.comments.add(_comment);
                   _addTitleController.text = '';
                   _addNoteController.text = '';
@@ -135,6 +139,7 @@ class BookDetailsPageState extends State<BookDetailsPage> {
           color: Colors.black,
           margin: EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 6.0),
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               ListTile(
                 title: Text(
@@ -146,14 +151,11 @@ class BookDetailsPageState extends State<BookDetailsPage> {
                         .comments[comments.comments.length - index - 1].note,
                     style: globals.ts(15.0, Colors.white, FontWeight.w300)),
               ),
-              /* Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: <Widget>[
-                  globals.styledRaisedButton(
-                      "Delete", 15.0, Colors.black54, Colors.white, () {}),
-                  SizedBox(width: 5),
-                ],
-              ),*/
+              Text(
+                  Library.convertDateTimeStoreToDisplay(comments
+                      .comments[comments.comments.length - index - 1]
+                      .createTime),
+                  style: globals.ts(12.0, Colors.white, FontWeight.w100)),
             ],
           ),
         );
