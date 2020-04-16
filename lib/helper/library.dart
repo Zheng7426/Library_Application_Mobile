@@ -7,9 +7,14 @@ import 'package:library_application_mobile/models/comment.dart';
 import 'package:library_application_mobile/models/book_info.dart';
 
 class Library {
+  static void initGetData() {
+    globals.bookCollectionData = getBookCollectionData();
+    globals.currentUser = Library.getCurrentUserInfo();
+    globals.favoriteBooks = Library.getFavoriteBooks(globals.currentUser.id);
+  }
 
   static String addTzToStoreFormat(String dateTimeString) {
-    String newDateTimeString = dateTimeString.replaceFirst(' ', 'T')+'Z';
+    String newDateTimeString = dateTimeString.replaceFirst(' ', 'T') + 'Z';
     return newDateTimeString;
   }
 
@@ -28,24 +33,41 @@ class Library {
     return globals.storeDateFormat.format(dateTime);
   }
 
+  static List<BookInfo> getBookCollectionData() {
+    List<BookInfo> books = [];
+    test_data.bookData.forEach((item) {
+      books.add(BookInfo.fromJson(item));
+    });
+    return books;
+  }
+
   static UserInfo getCurrentUserInfo() {
     return UserInfo.fromJson(test_data.currentUserJson);
   }
 
   static List<BookInfo> getGenreBookData(String selectedGenre) {
     List<BookInfo> books = [];
-    test_data.bookData.forEach((item) {
-      if (item["genre"] == selectedGenre) {
-        books.add(BookInfo.fromJson(item));
+    globals.bookCollectionData.forEach((item) {
+      if (item.genre == selectedGenre) {
+        books.add(item);
       }
     });
     return books;
   }
 
-  static List<String> getGenreList(List<Map<String, dynamic>> bookList) {
+  static BookInfo getBookDataFromBookId(int bookId) {
+    for (BookInfo item in globals.bookCollectionData) {
+      if (item.id == bookId) {
+        return item;
+      }
+    }
+    return null;
+  }
+
+  static List<String> getGenreList(List<BookInfo> bookList) {
     Set<String> genreSet = {};
     bookList.forEach((item) {
-      genreSet.add(item["genre"]);
+      genreSet.add(item.genre);
     });
     return genreSet.toList();
   }
@@ -66,11 +88,18 @@ class Library {
   }
 
   static bool removeFavoriteBook(int uid, int bid) {
-    if(uid ==globals.favoriteBooks.userId) {
-      if(globals.favoriteBooks.bookIdList.contains(bid)) {
+    if (uid == globals.favoriteBooks.userId) {
+      if (globals.favoriteBooks.bookIdList.contains(bid)) {
         globals.favoriteBooks.bookIdList.remove(bid);
         return true;
       }
+    }
+    return false;
+  }
+
+  static bool isFavoriteBook(int uid, int bid) {
+    if (uid == globals.favoriteBooks.userId) {
+      return globals.favoriteBooks.bookIdList.contains(bid);
     }
     return false;
   }

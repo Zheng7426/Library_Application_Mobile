@@ -18,6 +18,7 @@ final storeDateFormat = DateFormat('yyyy-MM-dd hh:mm:ss.sss');
 
 UserInfo currentUser = null;
 FavoriteBooks favoriteBooks = null;
+List<BookInfo> bookCollectionData = null;
 
 final int color1 = 0xFF295A8D;
 final int color3 = 0xFF92AE85;
@@ -120,3 +121,4 @@ Widget headerHpl() {
     ),
   );
 }
+

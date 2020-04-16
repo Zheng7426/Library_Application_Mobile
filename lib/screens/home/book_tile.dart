@@ -4,11 +4,17 @@ import 'package:library_application_mobile/models/book_info.dart';
 import 'package:library_application_mobile/helper/library.dart';
 import 'package:flutter/material.dart';
 
-class BookInfoTile extends StatelessWidget {
+class BookInfoTile extends StatefulWidget {
   final BookInfo bookInfo;
-  final GlobalKey<BookDetailsPageState> _key = GlobalKey();
 
   BookInfoTile({this.bookInfo});
+
+  @override
+  _BookInfoTileState createState() => _BookInfoTileState();
+}
+
+class _BookInfoTileState extends State<BookInfoTile> {
+  final GlobalKey<BookDetailsPageState> _key = GlobalKey();
 
   int uid = globals.currentUser.id;
 
@@ -19,9 +25,8 @@ class BookInfoTile extends StatelessWidget {
       child: Column(
         children: <Widget>[
           ListTile(
-            title: Text(bookInfo.title),
-            subtitle: Text(bookInfo.author),
-            //dense: true,
+            title: Text(widget.bookInfo.title),
+            subtitle: Text(widget.bookInfo.author),
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
@@ -33,21 +38,25 @@ class BookInfoTile extends StatelessWidget {
                   MaterialPageRoute(
                     builder: (context) => BookDetailsPage(
                       key: _key,
-                      bookInfo: bookInfo,
+                      bookInfo: widget.bookInfo,
                     ),
                   ),
                 );
               }),
               SizedBox(width: 5),
-              globals.styledRaisedButton(
-                  "Favorite", 15.0, Colors.green, Colors.white, () {
-                Library.addFavoriteBook(uid, bookInfo.id);
-              }),
-              SizedBox(width: 5),
-              globals.styledRaisedButton(
-                  "Unfavorite", 15.0, Colors.amber, Colors.black, () {
-                Library.removeFavoriteBook(uid, bookInfo.id);
-              }),
+              Library.isFavoriteBook(uid, widget.bookInfo.id)
+                  ? globals.styledRaisedButton(
+                      "Unfavorite", 15.0, Colors.amber, Colors.black, () {
+                      setState(() {
+                        Library.removeFavoriteBook(uid, widget.bookInfo.id);
+                      });
+                    })
+                  : globals.styledRaisedButton(
+                      "Favorite", 15.0, Colors.green, Colors.white, () {
+                      setState(() {
+                        Library.addFavoriteBook(uid, widget.bookInfo.id);
+                      });
+                    }),
               SizedBox(width: 5),
             ],
           )
