@@ -1,6 +1,6 @@
 import 'dart:convert' as convert;
 import 'package:http/http.dart' as http;
-import 'package:library_application_mobile/models/comment.dart';
+import 'package:library_application_mobile/models/comments.dart';
 import 'package:library_application_mobile/shared/globals.dart' as globals;
 
 class HttpService {
@@ -19,7 +19,7 @@ class HttpService {
     }
   }
 
-  Future<void> leaveComments(Comment comment) async {
+  Future<void> leaveComments(Comments comment) async {
     response = await http.post(globals.libraryApplicationUrl);
     if (response.statusCode == 200) {
       print('Success!');

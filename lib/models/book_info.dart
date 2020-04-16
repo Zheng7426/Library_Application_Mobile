@@ -6,20 +6,21 @@ class BookInfo {
   String genre;
   String isbn;
 
-  BookInfo(
-      {this.id,
-        this.title,
-        this.author,
-        this.summary,
-        this.genre,
-        this.isbn,});
+  BookInfo({
+    this.id,
+    this.title,
+    this.author,
+    this.summary,
+    this.genre,
+    this.isbn,
+  });
 
-  BookInfo.fromJson(Map json){
+  BookInfo.fromJson(Map json) {
     this.id = json["id"];
-    this.title = json ["title"];
-    this.author = json ["author"];
-    this.summary = json ["summary"];
-    this.genre = json ["genre"];
-    this.isbn= json["isbn"];
+    this.title = json["title"];
+    this.author = json["author"];
+    this.summary = json["summary"];
+    this.genre = json["genre"];
+    this.isbn = json["isbn"];
   }
 }

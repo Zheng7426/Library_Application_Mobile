@@ -1,12 +1,14 @@
 class Comment {
-  final int id;
-  final String title;
-  final String note;
-  final int bookId;
+  String title;
+  String note;
 
-  Comment(
-      {this.id,
-        this.title,
-        this.note,
-        this.bookId});
+  Comment({
+    this.title,
+    this.note,
+  });
+
+  Comment.fromJson(Map json) {
+    this.title = json["title"];
+    this.note = json["note"];
+  }
 }

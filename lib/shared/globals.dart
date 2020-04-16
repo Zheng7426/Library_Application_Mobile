@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:library_application_mobile/models/user_info.dart';
 import 'package:library_application_mobile/models/favorite_books.dart';
+import 'package:library_application_mobile/models/comments.dart';
+import 'package:library_application_mobile/models/comment.dart';
+import 'package:library_application_mobile/models/book_info.dart';
 
 final String emailDomain = '@kts.com';
 final String libraryApplicationUrl =
@@ -269,6 +272,20 @@ Map<String, dynamic> favoriteBookListJson = {
   "book_list": [3, 5, 7, 9],
 };
 
+Map<String, dynamic> bookCommentListJson = {
+  "book_id": 2,
+  "comments": [
+    {
+      "title":"good book",
+      "note":"A book I will recommend to everyone!"
+    },
+    {
+      "title":"good book+1",
+      "note":"A book I will recommend to everyone too!"
+    }
+  ]
+};
+
 UserInfo getCurrentUserInfo() {
   return UserInfo.fromJson(currentUserJson);
 }
@@ -278,4 +295,19 @@ FavoriteBooks getFavoriteBooks(UserInfo ui) {
   return (ui.id == bookList["user_id"])
       ? FavoriteBooks.fromJson(bookList)
       : null;
+}
+
+Comments getBookComments(BookInfo bi) {
+  Map<String, dynamic> comments = bookCommentListJson;
+  Map<String, dynamic> comments1 = Map<String, dynamic>();
+  if(bi.id == comments["book_id"]) {
+    comments1["book_id"] = comments["book_id"];
+    comments1["comments"] = [];
+    comments["comments"].forEach((item) {
+      comments1["comments"].add(Comment.fromJson(item));
+    });
+  }
+  return (bi.id == comments["book_id"])
+      ? Comments.fromJson(comments1)
+      : Comments.empty(bi.id);
 }
