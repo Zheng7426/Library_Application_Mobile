@@ -1,12 +1,16 @@
 import 'package:library_application_mobile/shared/globals.dart' as globals;
 import 'package:library_application_mobile/screens/home/book_details.dart';
 import 'package:library_application_mobile/models/book_info.dart';
+import 'package:library_application_mobile/helper/library.dart';
 import 'package:flutter/material.dart';
 
 class BookInfoTile extends StatelessWidget {
   final BookInfo bookInfo;
   final GlobalKey<BookDetailsPageState> _key = GlobalKey();
+
   BookInfoTile({this.bookInfo});
+
+  int uid = globals.currentUser.id;
 
   @override
   Widget build(BuildContext context) {
@@ -23,22 +27,28 @@ class BookInfoTile extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.end,
             children: <Widget>[
               globals.styledRaisedButton(
-                  "Show", 15.0, Colors.black54, Colors.white, () {Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => BookDetailsPage(
-                    key: _key,
-                    bookInfo: bookInfo,
+                  "Show", 15.0, Colors.black54, Colors.white, () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => BookDetailsPage(
+                      key: _key,
+                      bookInfo: bookInfo,
+                    ),
                   ),
-                ),
-              );}),
-              SizedBox(width:5),
+                );
+              }),
+              SizedBox(width: 5),
               globals.styledRaisedButton(
-                  "Favorite", 15.0, Colors.green, Colors.white, () {}),
-              SizedBox(width:5),
+                  "Favorite", 15.0, Colors.green, Colors.white, () {
+                Library.addFavoriteBook(uid, bookInfo.id);
+              }),
+              SizedBox(width: 5),
               globals.styledRaisedButton(
-                  "Unfavorite", 15.0, Colors.amber, Colors.black, () {}),
-              SizedBox(width:5),
+                  "Unfavorite", 15.0, Colors.amber, Colors.black, () {
+                Library.removeFavoriteBook(uid, bookInfo.id);
+              }),
+              SizedBox(width: 5),
             ],
           )
         ],

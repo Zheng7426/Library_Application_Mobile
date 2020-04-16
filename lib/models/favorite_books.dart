@@ -11,4 +11,9 @@ class FavoriteBooks {
     this.userId = json["userId"];
     this.bookIdList = json["bookId"];
   }
+
+  FavoriteBooks.empty(int uid) {
+    this.userId = uid;
+    this.bookIdList = [];
+  }
 }

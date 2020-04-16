@@ -14,8 +14,20 @@ class Comments {
     this.comments = List<Comment>.from(json["comments"]);
   }
 
-  Comments.empty(int bi) {
-    this.bookId = bi;
+  Comments.empty(int bid) {
+    this.bookId = bid;
     this.comments = [];
+  }
+
+  Comments.addComment(int bid, Comment c) {
+    if(this.bookId==bid) {
+      this.comments.add(c);
+    }
+  }
+
+  Comments.removeComment(int bid, Comment c) {
+    if(this.bookId==bid) {
+      this.comments.remove(c);
+    }
   }
 }

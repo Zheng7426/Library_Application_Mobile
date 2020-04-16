@@ -5,7 +5,7 @@ import 'package:library_application_mobile/models/comment.dart';
 import 'package:library_application_mobile/shared/loading.dart';
 import 'package:library_application_mobile/shared/globals.dart' as globals;
 import 'package:provider/provider.dart';
-import 'package:library_application_mobile/helper/call_no.dart';
+import 'package:library_application_mobile/helper/library.dart';
 
 class BookDetailsPage extends StatefulWidget {
   final BookInfo bookInfo;
@@ -24,7 +24,7 @@ class BookDetailsPageState extends State<BookDetailsPage> {
 
   @override
   void initState() {
-    comments = globals.getBookComments(widget.bookInfo);
+    comments = Library.getBookComments(widget.bookInfo);
     super.initState();
   }
 
@@ -101,18 +101,25 @@ class BookDetailsPageState extends State<BookDetailsPage> {
             ),
           ),
           SizedBox(height: 10),
-          globals.styledRaisedButton(
-              "Add New Note", 15.0, Colors.green, Colors.white, () {
-            setState(() {
-              Map c = {};
-              c["title"] = _addTitleController.text;
-              c["note"] = _addNoteController.text;
-              _comment = Comment.fromJson(c);
-              comments.comments.add(_comment);
-              _addTitleController.text = '';
-              _addNoteController.text = '';
-            });
-          }),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              globals.styledRaisedButton(
+                  "Add Note", 15.0, Colors.blue, Colors.white, () {
+                setState(() {
+                  _comment = Comment.construct(
+                      _addTitleController.text, _addNoteController.text);
+                  comments.comments.add(_comment);
+                  _addTitleController.text = '';
+                  _addNoteController.text = '';
+                });
+              }),
+              globals.styledRaisedButton(
+                  "Back", 15.0, Colors.green, Colors.white, () {
+                Navigator.of(context).pop();
+              }),
+            ],
+          )
         ],
       ),
     );
@@ -130,10 +137,12 @@ class BookDetailsPageState extends State<BookDetailsPage> {
           child: Column(
             children: <Widget>[
               ListTile(
-                title: Text(comments
+                title: Text(
+                    comments
                         .comments[comments.comments.length - index - 1].title,
                     style: globals.ts(15.0, Colors.white, FontWeight.w600)),
-                subtitle: Text(comments
+                subtitle: Text(
+                    comments
                         .comments[comments.comments.length - index - 1].note,
                     style: globals.ts(15.0, Colors.white, FontWeight.w300)),
               ),

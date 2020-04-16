@@ -11,4 +11,9 @@ class Comment {
     this.title = json["title"];
     this.note = json["note"];
   }
+
+  Comment.construct(String title, String note) {
+    this.title = title;
+    this.note = note;
+  }
 }

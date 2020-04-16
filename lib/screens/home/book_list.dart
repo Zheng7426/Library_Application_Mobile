@@ -1,4 +1,4 @@
-import 'package:library_application_mobile/shared/globals.dart' as globals;
+import 'package:library_application_mobile/helper/library.dart';
 import 'package:library_application_mobile/models/book_info.dart';
 import 'package:library_application_mobile/screens/home/book_tile.dart';
 import 'package:flutter/material.dart';
@@ -13,14 +13,12 @@ class BookList extends StatefulWidget {
 }
 
 class _BookListState extends State<BookList> {
+
   @override
   Widget build(BuildContext context) {
-    List<BookInfo> books = [];
-    globals.books.forEach((item) {
-      if (item["genre"] == widget.selectedGenre) {
-        books.add(BookInfo.fromJson(item));
-      }
-    });
+
+    List<BookInfo> books = Library.getGenreBookData(widget.selectedGenre);
+
     return ListView.builder(
       scrollDirection: Axis.vertical,
       shrinkWrap: true,

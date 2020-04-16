@@ -3,8 +3,8 @@ import 'package:library_application_mobile/models/user_info.dart';
 import 'package:library_application_mobile/models/favorite_books.dart';
 import 'package:library_application_mobile/shared/loading.dart';
 import 'package:library_application_mobile/shared/globals.dart' as globals;
-import 'package:provider/provider.dart';
-import 'package:library_application_mobile/helper/call_no.dart';
+import 'package:library_application_mobile/shared/test_data.dart' as test_data;
+import 'package:library_application_mobile/helper/library.dart';
 import 'package:library_application_mobile/screens/home/book_list.dart';
 
 class Home extends StatefulWidget {
@@ -16,14 +16,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   String flashMsg = '';
   List<String> genreList = [];
   String _selectedGenre;
-
-  List<String> getGenreList(List<Map<String, dynamic>> bookList) {
-    Set<String> genreSet = {};
-    bookList.forEach((item) {
-      genreSet.add(item["genre"]);
-    });
-    return genreSet.toList();
-  }
 
   Widget displayBookList(String genre) {
     return Container(
@@ -95,10 +87,10 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    genreList = getGenreList(globals.books);
+    genreList = Library.getGenreList(test_data.bookData);
     _selectedGenre = genreList[0];  //forced to the first element
-    globals.currentUser = globals.getCurrentUserInfo();
-    globals.favoriteBook = globals.getFavoriteBooks(globals.currentUser);
+    globals.currentUser = Library.getCurrentUserInfo();
+    globals.favoriteBooks = Library.getFavoriteBooks(globals.currentUser.id);
   }
 
   @override
