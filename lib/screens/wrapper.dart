@@ -1,19 +1,22 @@
 import 'package:library_application_mobile/screens/authenticate/authenticate.dart';
 import 'package:library_application_mobile/screens/home/home.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:library_application_mobile/screens/authenticate/receiver.dart';
+//import 'package:provider/provider.dart';
+import 'package:library_application_mobile/screens/authenticate/authenticate.dart';
 
 class Wrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     //final user = Provider.of<User>(context);
-
+    final user = true;
     // return either the Home or Authenticate widget
-    /*if (user == null) {
+    if (user == true) {
       //return Authenticate();
-      return Home();
-    } else */{
-      return Home();
+      return Receiver();
+      //return Home();
+    } else {
+      return Receiver();
     }
   }
 }

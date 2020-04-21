@@ -1,4 +1,4 @@
-library library_application_mobile.testdata;
+library library_application_mobile.globals;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

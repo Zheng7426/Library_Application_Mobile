@@ -2,6 +2,7 @@ import 'dart:convert' as convert;
 import 'package:http/http.dart' as http;
 import 'package:library_application_mobile/models/comments.dart';
 import 'package:library_application_mobile/shared/globals.dart' as globals;
+import 'package:dio/dio.dart';
 
 class HttpService {
   final String uid;
@@ -51,5 +52,14 @@ class Session {
       headers['cookie'] =
       (index == -1) ? rawCookie : rawCookie.substring(0, index);
     }
+  }
+}
+
+void getHttp() async {
+  try {
+    Response response = await Dio().get("http://www.google.com");
+    print(response);
+  } catch (e) {
+    print(e);
   }
 }
