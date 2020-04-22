@@ -33,7 +33,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     children: <Widget>[
       Text(
         'Books',
-        style: globals.ts(30.0, Colors.black, FontWeight.w500),
+        style: globals.ts(28.0, Colors.black, FontWeight.w700),
       ),
     ],
   );

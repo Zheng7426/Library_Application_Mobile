@@ -116,6 +116,7 @@ class BookDetailsPageState extends State<BookDetailsPage> {
                   comments.comments.add(_comment);
                   _addTitleController.text = '';
                   _addNoteController.text = '';
+                  FocusScope.of(context).requestFocus(FocusNode());
                 });
               }),
               globals.styledRaisedButton(
