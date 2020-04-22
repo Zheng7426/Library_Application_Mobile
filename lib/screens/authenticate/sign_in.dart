@@ -90,7 +90,7 @@ class _State extends State<LoginBlock> {
   final _formKey = GlobalKey<FormState>();
 
   bool _autoValidate = false;
-  String _username;
+  String _email;
   String _password;
 
   @override
@@ -132,14 +132,14 @@ class _State extends State<LoginBlock> {
         new TextFormField(
           style: globals.ts(18.0, Colors.black, FontWeight.w400),
           decoration: const InputDecoration(
-            labelText: 'Username',
+            labelText: 'Email',
             helperText: '',
             icon: Icon(Icons.account_circle),
           ),
           keyboardType: TextInputType.text,
           validator: _validateUsername,
           onSaved: (String val) {
-            _username = val;
+            _email = val;
           },
         ),
         new SizedBox(
