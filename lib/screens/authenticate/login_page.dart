@@ -55,7 +55,16 @@ class _LoginPageState extends State<LoginPage> {
                             Map<String, dynamic> result =
                                 await Library.getUserToken(email, password);
                             if (Library.checkUserToken(result, context)) {
-
+                              Map<String, dynamic> result =
+                                  await Library.getUserInfoWithEmail(email);
+                              if (Library.checkUserInfo(result, context)) {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => Home(),
+                                  ),
+                                );
+                              }
                             }
                             setState(() => _is_loading = false);
                           },

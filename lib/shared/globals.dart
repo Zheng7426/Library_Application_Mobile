@@ -14,6 +14,8 @@ const libraryApplicationUrl =
     'https://library-application-rails-2.herokuapp.com/';
 const authApi = 'api/auth/';
 const bookBaseApi = 'api/books/';
+const usersApi = 'api/users';
+
 
 final displayDateFormat = DateFormat('yyyy-MM-dd hh:mm:ss');
 final storeDateFormat = DateFormat('yyyy-MM-dd hh:mm:ss.sss');

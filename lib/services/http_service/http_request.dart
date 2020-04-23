@@ -7,12 +7,17 @@ import 'package:connectivity/connectivity.dart';
 
 class HttpService {
   Dio _dio;
-  final Options _options = Options(
+  Options _options = Options(
     followRedirects: false,
     validateStatus: (status) {
       return status < 600;
     },
   );
+
+  Options addToken(Options options, String token) {
+    options.headers["authorization"] = "token ${token}";
+    return options;
+  }
 
   HttpService() {
     _dio = Dio();
@@ -26,29 +31,43 @@ class HttpService {
     );
   }
 
-  Future<Map> httpRequest(
-      String reqType, String hostName, Map<String, dynamic> params) async {
+  Future<dynamic> httpRequest(String reqType, String hostName,
+      {Map<String, dynamic> params = null, String token = null}) async {
     Response _res;
+    Options options = _options;
+    if (token != null) {
+      options = addToken(options, token);
+    }
     switch (reqType) {
       case "POST":
-        _res = await _dio.post(hostName,
-            queryParameters: params, options: _options);
+        (params != null)
+            ? _res = await _dio.post(hostName,
+                queryParameters: params, options: options)
+            : _res = await _dio.post(hostName, options: options);
         break;
       case "GET":
-        _res = await _dio.get(hostName,
-            queryParameters: params, options: _options);
+        (params != null)
+            ? _res = await _dio.get(hostName,
+                queryParameters: params, options: options)
+            : _res = await _dio.get(hostName, options: options);
         break;
       case "PUT":
-        _res = await _dio.put(hostName,
-            queryParameters: params, options: _options);
+        (params != null)
+            ? _res = await _dio.put(hostName,
+            queryParameters: params, options: options)
+            : _res = await _dio.put(hostName, options: options);
         break;
       case "PATCH":
-        _res = await _dio.patch(hostName,
-            queryParameters: params, options: _options);
+        (params != null)
+            ? _res = await _dio.patch(hostName,
+            queryParameters: params, options: options)
+            : _res = await _dio.patch(hostName, options: options);
         break;
       case "DELETE":
-        _res = await _dio.delete(hostName,
-            queryParameters: params, options: _options);
+        (params != null)
+            ? _res = await _dio.delete(hostName,
+            queryParameters: params, options: options)
+            : _res = await _dio.delete(hostName, options: options);
         break;
     }
     return _res.data;

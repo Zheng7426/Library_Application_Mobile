@@ -19,7 +19,7 @@ class UserInfo {
     this.name = json ["name"];
     this.email = json ["email"];
     this.employee_number = json ["employee_number"];
-    this.eomployee_role = json ["eomployee_role"];
+    this.eomployee_role = json ["employee_role"];
     this.user_role= json["user_role"];
   }
 }

@@ -15,9 +15,9 @@ class Comment {
     this.createTime = json["created_at"];
   }
 
-  Comment.construct(String title, String note, String create_time) {
+  Comment.construct(String title, String note, String createTime) {
     this.title = title;
     this.note = note;
-    this.createTime = create_time;
+    this.createTime = createTime;
   }
 }

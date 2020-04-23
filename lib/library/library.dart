@@ -8,8 +8,13 @@ import 'package:library_application_mobile/models/comment.dart';
 import 'package:library_application_mobile/models/book_info.dart';
 
 class Library {
+
   static String getAuthApiUrl() {
     return "${globals.libraryApplicationUrl}${globals.authApi}?";
+  }
+
+  static String getUsersWithEmailApiUrl(String email) {
+    return "${globals.libraryApplicationUrl}${globals.usersApi}?email=${email}";
   }
 
   static Map<String, dynamic> prepareTokenQueryParam(
@@ -21,9 +26,9 @@ class Library {
       String email, String password) async {
     Map<String, dynamic> result = await globals.httpService.httpRequest(
         "POST",
-        Library.getAuthApiUrl(),
-        Library.prepareTokenQueryParam(email, password));
-    return await result;
+        getAuthApiUrl(),
+        params:prepareTokenQueryParam(email, password));
+    return result;
   }
 
   static bool checkUserToken(Map<String, dynamic> result, BuildContext context) {
@@ -44,9 +49,35 @@ class Library {
     return false;
   }
 
+  static Future<Map<String, dynamic>> getUserInfoWithEmail(String email) async {
+     List<dynamic> result =  await globals.httpService.httpRequest(
+        "GET",
+        getUsersWithEmailApiUrl(email),
+        token:globals.userToken);
+    return Map<String,dynamic>.from(result[0]);
+  }
+
+  static bool checkUserInfo(Map<String, dynamic> result, BuildContext context) {
+    if (result.containsKey('id')) {
+      globals.currentUser = getCurrentUserInfo(result);
+      return true;
+    } else if (result.containsKey('errors')) {
+      globals.showMessageDialog(context, result['errors'][0]);
+    } else if (result.containsKey('status')) {
+      String errMsg = 'status: ' +
+          result['status'].toString() +
+          ' ' +
+          result['error'];
+      globals.showMessageDialog(context, errMsg);
+    } else {
+      globals.showMessageDialog(context, "Unknown Error");
+    }
+    return false;
+  }
+
   static void initGetData() {
     globals.bookCollectionData = getBookCollectionData();
-    globals.currentUser = Library.getCurrentUserInfo();
+    //globals.currentUser = Library.getCurrentUserInfo();
     globals.favoriteBooks = Library.getFavoriteBooks(globals.currentUser.id);
   }
 
@@ -78,8 +109,8 @@ class Library {
     return books;
   }
 
-  static UserInfo getCurrentUserInfo() {
-    return UserInfo.fromJson(test_data.currentUserJson);
+  static UserInfo getCurrentUserInfo(Map currentUserJson) {
+    return UserInfo.fromJson(currentUserJson);
   }
 
   static List<BookInfo> getGenreBookData(String selectedGenre) {
