@@ -8,14 +8,18 @@ import 'package:library_application_mobile/models/comments.dart';
 import 'package:library_application_mobile/models/comment.dart';
 import 'package:library_application_mobile/models/book_info.dart';
 import 'package:intl/intl.dart';
+import 'package:library_application_mobile/services/http_service/http_request.dart';
 
-final String emailDomain = '@kts.com';
-final String libraryApplicationUrl =
-    'https://my.api.mockaroo.com/popularity.json?key=da404bc0';
+const libraryApplicationUrl =
+    'https://library-application-rails-2.herokuapp.com/';
+const authApi = 'api/auth/';
+const bookBaseApi = 'api/books/';
 
 final displayDateFormat = DateFormat('yyyy-MM-dd hh:mm:ss');
 final storeDateFormat = DateFormat('yyyy-MM-dd hh:mm:ss.sss');
 
+HttpService httpService;
+String userToken;
 UserInfo currentUser = null;
 FavoriteBooks favoriteBooks = null;
 List<BookInfo> bookCollectionData = null;
@@ -67,9 +71,9 @@ void showMessageDialog(BuildContext context, String msg) {
       context: context,
       builder: (BuildContext context) {
         return Dialog(
-          backgroundColor: Color(color1),
+          backgroundColor: Colors.white,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20.0),
+            borderRadius: BorderRadius.circular(5.0),
           ),
           child: Container(
             height: 150,

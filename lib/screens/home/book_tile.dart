@@ -1,7 +1,7 @@
 import 'package:library_application_mobile/shared/globals.dart' as globals;
 import 'package:library_application_mobile/screens/home/book_details.dart';
 import 'package:library_application_mobile/models/book_info.dart';
-import 'package:library_application_mobile/helper/library.dart';
+import 'package:library_application_mobile/library/library.dart';
 import 'package:flutter/material.dart';
 
 class BookInfoTile extends StatefulWidget {

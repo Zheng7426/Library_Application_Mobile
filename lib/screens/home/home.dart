@@ -2,16 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:library_application_mobile/shared/loading.dart';
 import 'package:library_application_mobile/shared/globals.dart' as globals;
 import 'package:library_application_mobile/shared/test_data.dart' as test_data;
-import 'package:library_application_mobile/helper/library.dart';
+import 'package:library_application_mobile/library/library.dart';
 import 'package:library_application_mobile/screens/home/book_list.dart';
 import 'package:library_application_mobile/screens/home/bookmark.dart';
 
 class Home extends StatefulWidget {
-  Home({Key key,
-    @required this.jwt,
-  }):super(key:key);
 
-  final String jwt;
   @override
   _HomeState createState() => _HomeState();
 }
@@ -47,8 +43,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           child: Row(
             children: <Widget>[
               Text(
-                //globals.currentUser.email,
-                widget.jwt,
+                globals.currentUser.email,
                 style: globals.ts(15.0, Colors.black, FontWeight.w400),
               ),
               SizedBox(width: 10),

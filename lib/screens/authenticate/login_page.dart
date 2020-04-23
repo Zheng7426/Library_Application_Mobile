@@ -1,81 +1,71 @@
+import 'package:library_application_mobile/shared/globals.dart' as globals;
+import 'package:library_application_mobile/shared/loading.dart';
+import 'package:library_application_mobile/library/library.dart';
 import 'package:flutter/material.dart';
-import 'package:dio/dio.dart';
-import 'package:http/http.dart' as http;
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'dart:convert' show json, base64, ascii;
 import 'package:library_application_mobile/screens/home/home.dart';
+import 'package:library_application_mobile/services/http_service/http_request.dart';
 
-const SERVER_IP = 'http://10.0.2.2:3000';
-final storage = FlutterSecureStorage();
-Dio dio = new Dio();
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
+  @override
+  _LoginPageState createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
   final TextEditingController _emailController = TextEditingController();
+
   final TextEditingController _passwordController = TextEditingController();
 
-  void displayDialog(context, title, text) => showDialog(
-    context: context,
-    builder: (context) =>
-        AlertDialog(
-            title: Text(title),
-            content: Text(text)
-        ),
-  );
-
-  Future<String> loginAttempt(String email, String password) async {
-    var res = await dio.post("${SERVER_IP}/api/auth?",
-        queryParameters: {
-          "user[email]": email,
-          "user[password]": password
-        }
-    );
-    var result = res.data;
-    return result['token'];
-  }
+  bool _is_loading = false;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text("Log In"),),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          children: <Widget>[
-            TextField(
-              controller: _emailController,
-              decoration: InputDecoration(
-                  labelText: 'Email Address'
+    globals.httpService = HttpService();
+
+    return _is_loading
+        ? Loading()
+        : MaterialApp(
+            home: Scaffold(
+              backgroundColor: Colors.white,
+              body: Column(
+                children: <Widget>[
+                  /*-- header --*/
+                  globals.headerHpl(),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(20.0, 8.0, 20.0, 6.0),
+                    child: Column(
+                      children: <Widget>[
+                        TextField(
+                          controller: _emailController,
+                          decoration: InputDecoration(labelText: 'Email'),
+                        ),
+                        TextField(
+                          controller: _passwordController,
+                          obscureText: true,
+                          decoration: InputDecoration(labelText: 'Password'),
+                        ),
+                        globals.styledRaisedButton(
+                          "Log In",
+                          18.0,
+                          Colors.blue,
+                          Colors.white,
+                          () async {
+                            var email = _emailController.text;
+                            var password = _passwordController.text;
+                            setState(() => _is_loading = true);
+                            Map<String, dynamic> result =
+                                await Library.getUserToken(email, password);
+                            if (Library.checkUserToken(result, context)) {
+
+                            }
+                            setState(() => _is_loading = false);
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ),
-            TextField(
-              controller: _passwordController,
-              obscureText: true,
-              decoration: InputDecoration(
-                  labelText: 'Password'
-              ),
-            ),
-            FlatButton(
-                onPressed: () async {
-                  var email = _emailController.text;
-                  var password = _passwordController.text;
-                  var jwt = await loginAttempt(email, password);
-                  if (jwt != null) {
-                    storage.write(key: "jwt", value: jwt);
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) {
-                              return new Home(jwt: jwt);
-                            }));
-                  } else {
-                    displayDialog(context, "An Error Occurred",
-                        "No account was found matching that email and password");
-                  }
-                },
-                child: Text("Log In")
-            ),
-          ],
-        ),
-      ),
-    );
+          );
   }
 }

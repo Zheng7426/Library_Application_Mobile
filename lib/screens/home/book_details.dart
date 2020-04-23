@@ -5,7 +5,7 @@ import 'package:library_application_mobile/models/comment.dart';
 import 'package:library_application_mobile/shared/loading.dart';
 import 'package:library_application_mobile/shared/globals.dart' as globals;
 import 'package:provider/provider.dart';
-import 'package:library_application_mobile/helper/library.dart';
+import 'package:library_application_mobile/library/library.dart';
 
 
 class BookDetailsPage extends StatefulWidget {

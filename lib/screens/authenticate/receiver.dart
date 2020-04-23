@@ -13,7 +13,6 @@ final String authURL = 'http://10.0.2.2:3000/api/auth?';
 final String bookURL = 'http://10.0.2.2:3000/api/books/1';
 
 class Receiver extends StatefulWidget {
-
   _ReceiverState createState() => _ReceiverState();
 }
 
@@ -30,21 +29,6 @@ class _ReceiverState extends State<Receiver>{
     futureBook = getBookInfo();
   }
 
-
-
-
-
-//  @override
-//  Widget build(BuildContext context) {
-//    return Scaffold(
-//      appBar: AppBar(
-//        title: Text('First Route'),
-//      ),
-//      body: Center(
-//        child: Text('${token}\n${title}\n${author}'),
-//      ),
-//    );
-//  }
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -74,26 +58,9 @@ class _ReceiverState extends State<Receiver>{
       ),
     );
   }
-
-
-//  getToken() async {
-//
-//    var response = await dio.post("${widget.authURL}", queryParameters: {"user[email]": 'huangz55@mcmaster.ca', "user[password]": "abc123"});
-//    var result = response.data;
-//    global_token = result['token'];
-//
-////    setState(() {
-////      token = result['token'];
-////    });
-//  }
-
 }
 
 Future<BookInfo> getBookInfo() async {
-//  var status = false;
-//  Future.delayed(_ReceiverState.getToken()).whenComplete((){
-//    status = true;
-//  });
   var response_post = await dio.post("${authURL}", queryParameters: {"user[email]": 'huangz55@mcmaster.ca', "user[password]": "abc123"});
   var result = response_post.data;
   global_token = result['token'];

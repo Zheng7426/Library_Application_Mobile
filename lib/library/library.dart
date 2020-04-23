@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:library_application_mobile/shared/test_data.dart' as test_data;
 import 'package:library_application_mobile/shared/globals.dart' as globals;
 import 'package:library_application_mobile/models/user_info.dart';
@@ -7,6 +8,42 @@ import 'package:library_application_mobile/models/comment.dart';
 import 'package:library_application_mobile/models/book_info.dart';
 
 class Library {
+  static String getAuthApiUrl() {
+    return "${globals.libraryApplicationUrl}${globals.authApi}?";
+  }
+
+  static Map<String, dynamic> prepareTokenQueryParam(
+      String email, String password) {
+    return {"user[email]": email, "user[password]": password};
+  }
+
+  static Future<Map<String, dynamic>> getUserToken(
+      String email, String password) async {
+    Map<String, dynamic> result = await globals.httpService.httpRequest(
+        "POST",
+        Library.getAuthApiUrl(),
+        Library.prepareTokenQueryParam(email, password));
+    return await result;
+  }
+
+  static bool checkUserToken(Map<String, dynamic> result, BuildContext context) {
+    if (result.containsKey('token')) {
+      globals.userToken = result['token'];
+      return true;
+    } else if (result.containsKey('errors')) {
+      globals.showMessageDialog(context, result['errors'][0]);
+    } else if (result.containsKey('status')) {
+      String errMsg = 'status: ' +
+          result['status'].toString() +
+          ' ' +
+          result['error'];
+      globals.showMessageDialog(context, errMsg);
+    } else {
+      globals.showMessageDialog(context, "Unknown Error");
+    }
+    return false;
+  }
+
   static void initGetData() {
     globals.bookCollectionData = getBookCollectionData();
     globals.currentUser = Library.getCurrentUserInfo();
