@@ -8,8 +8,9 @@ class FavoriteBooks {
   });
 
   FavoriteBooks.fromJson(Map json) {
-    this.userId = json["user_id"];
-    this.bookIdList = json["book_list"];
+    this.userId = int.parse(json["user_id"]);
+    this.bookIdList =
+        json["book_list"].isEmpty ? new List<int>.from(json["book_list"]) : [];
   }
 
   FavoriteBooks.empty(int uid) {

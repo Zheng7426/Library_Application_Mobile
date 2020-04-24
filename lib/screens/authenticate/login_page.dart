@@ -31,9 +31,10 @@ class _LoginPageState extends State<LoginPage> {
                   /*-- header --*/
                   globals.headerHpl(),
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(20.0, 8.0, 20.0, 6.0),
+                    padding: const EdgeInsets.fromLTRB(50.0, 8.0, 50.0, 6.0),
                     child: Column(
                       children: <Widget>[
+                        SizedBox(height: 100),
                         TextField(
                           controller: _emailController,
                           decoration: InputDecoration(labelText: 'Email'),
@@ -43,6 +44,7 @@ class _LoginPageState extends State<LoginPage> {
                           obscureText: true,
                           decoration: InputDecoration(labelText: 'Password'),
                         ),
+                        SizedBox(height: 20),
                         globals.styledRaisedButton(
                           "Log In",
                           18.0,
@@ -52,18 +54,32 @@ class _LoginPageState extends State<LoginPage> {
                             var email = _emailController.text;
                             var password = _passwordController.text;
                             setState(() => _is_loading = true);
+                            // *** GET USER TOKEN ***
                             Map<String, dynamic> result =
                                 await Library.getUserToken(email, password);
                             if (Library.checkUserToken(result, context)) {
+                              // *** GET USER INFO WITH EMAIL ***
                               Map<String, dynamic> result =
                                   await Library.getUserInfoWithEmail(email);
                               if (Library.checkUserInfo(result, context)) {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => Home(),
-                                  ),
-                                );
+                                // *** GET BOOK LIST ***
+                                List<dynamic> result =
+                                    await Library.getBookList();
+                                if (Library.checkBookList(result, context)) {
+                                  // *** GET FAVORITE BOOK LIST ***
+                                  Map<String, dynamic> result =
+                                      await Library.getFavoriteBooksList(
+                                          globals.currentUser.id);
+                                  if (Library.checkFavoriteBooksList(
+                                      result, context)) {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => Home(),
+                                      ),
+                                    );
+                                  }
+                                }
                               }
                             }
                             setState(() => _is_loading = false);

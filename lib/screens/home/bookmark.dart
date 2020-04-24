@@ -43,10 +43,10 @@ class BookMarkPageState extends State<BookMarkPage> {
     return ListView.builder(
       scrollDirection: Axis.vertical,
       shrinkWrap: true,
-      itemCount: _favoriteBooks.bookIdList.length,
+      itemCount: globals.favoriteBooks.bookIdList.length,
       itemBuilder: (context, index) {
         BookInfo bookInfo =
-            Library.getBookDataFromBookId(_favoriteBooks.bookIdList[index]);
+            Library.getBookDataFromBookId(globals.favoriteBooks.bookIdList[index]);
         return Card(
           margin: EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 6.0),
           child: Column(
@@ -97,7 +97,6 @@ class BookMarkPageState extends State<BookMarkPage> {
   @override
   void initState() {
     super.initState();
-    _favoriteBooks = Library.getFavoriteBooks(widget.userInfo.id);
   }
 
   @override

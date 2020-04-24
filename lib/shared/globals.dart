@@ -15,6 +15,7 @@ const libraryApplicationUrl =
 const authApi = 'api/auth/';
 const bookBaseApi = 'api/books/';
 const usersApi = 'api/users';
+const bookmarkApi = 'api/bookmarks/';
 
 
 final displayDateFormat = DateFormat('yyyy-MM-dd hh:mm:ss');
