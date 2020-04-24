@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:library_application_mobile/models/user_info.dart';
 import 'package:library_application_mobile/models/favorite_books.dart';
-import 'package:library_application_mobile/models/comments.dart';
-import 'package:library_application_mobile/models/comment.dart';
 import 'package:library_application_mobile/models/book_info.dart';
 import 'package:intl/intl.dart';
 import 'package:library_application_mobile/services/http_service/http_request.dart';
@@ -17,12 +15,15 @@ const bookBaseApi = 'api/books/';
 const usersApi = 'api/users';
 const bookmarkApi = 'api/bookmarks/';
 
+const userCredentialStorageTag = 'USER_CREDENTIAL';
+
 
 final displayDateFormat = DateFormat('yyyy-MM-dd hh:mm:ss');
 final storeDateFormat = DateFormat('yyyy-MM-dd hh:mm:ss.sss');
 
 HttpService httpService;
 String userToken;
+Map<String,String> userCredential;
 UserInfo currentUser = null;
 FavoriteBooks favoriteBooks = null;
 List<BookInfo> bookCollectionData = null;

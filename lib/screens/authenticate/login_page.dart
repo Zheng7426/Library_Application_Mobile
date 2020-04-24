@@ -3,7 +3,6 @@ import 'package:library_application_mobile/shared/loading.dart';
 import 'package:library_application_mobile/library/library.dart';
 import 'package:flutter/material.dart';
 import 'package:library_application_mobile/screens/home/home.dart';
-import 'package:library_application_mobile/services/http_service/http_request.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -12,16 +11,12 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final TextEditingController _emailController = TextEditingController();
-
   final TextEditingController _passwordController = TextEditingController();
-
-  bool _is_loading = false;
+  bool _isLoading = false;
 
   @override
   Widget build(BuildContext context) {
-    globals.httpService = HttpService();
-
-    return _is_loading
+    return _isLoading
         ? Loading()
         : MaterialApp(
             home: Scaffold(
@@ -53,36 +48,24 @@ class _LoginPageState extends State<LoginPage> {
                           () async {
                             var email = _emailController.text;
                             var password = _passwordController.text;
-                            setState(() => _is_loading = true);
-                            // *** GET USER TOKEN ***
+                            setState(() => _isLoading = true);
+                            // get user token
                             Map<String, dynamic> result =
                                 await Library.getUserToken(email, password);
                             if (Library.checkUserToken(result, context)) {
-                              // *** GET USER INFO WITH EMAIL ***
-                              Map<String, dynamic> result =
-                                  await Library.getUserInfoWithEmail(email);
-                              if (Library.checkUserInfo(result, context)) {
-                                // *** GET BOOK LIST ***
-                                List<dynamic> result =
-                                    await Library.getBookList();
-                                if (Library.checkBookList(result, context)) {
-                                  // *** GET FAVORITE BOOK LIST ***
-                                  Map<String, dynamic> result =
-                                      await Library.getFavoriteBooksList(
-                                          globals.currentUser.id);
-                                  if (Library.checkFavoriteBooksList(
-                                      result, context)) {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => Home(),
-                                      ),
-                                    );
-                                  }
-                                }
-                              }
+                              // save user credentials to persistent storage
+                              Library.setUserCredential(email, password);
+                              Library.saveUserCredential();
+                              // get user info with email
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => Home(needToken: false),
+                                ),
+                              );
+                            } else {
+                              setState(() => _isLoading = false);
                             }
-                            setState(() => _is_loading = false);
                           },
                         ),
                       ],

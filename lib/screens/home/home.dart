@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:library_application_mobile/shared/loading.dart';
 import 'package:library_application_mobile/shared/globals.dart' as globals;
-import 'package:library_application_mobile/shared/test_data.dart' as test_data;
+import 'package:library_application_mobile/shared/loading.dart';
 import 'package:library_application_mobile/library/library.dart';
 import 'package:library_application_mobile/screens/home/book_list.dart';
 import 'package:library_application_mobile/screens/home/bookmark.dart';
+import 'package:library_application_mobile/screens/wrapper.dart';
 
 class Home extends StatefulWidget {
+  final bool needToken;
+
+  Home({@required this.needToken});
 
   @override
   _HomeState createState() => _HomeState();
@@ -17,6 +20,8 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   String flashMsg = '';
   List<String> genreList = [];
   String _selectedGenre;
+  bool _isLoading = true;
+  bool _systemDataLoaded = false;
 
   Widget displayBookList(String genre) {
     return Container(
@@ -48,7 +53,17 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
               ),
               SizedBox(width: 10),
               globals.styledRaisedButton(
-                  "Logout", 18.0, Colors.green, Colors.white, () {}),
+                  "Logout", 18.0, Colors.green, Colors.white, () {
+                Library.clearUserCredential();
+                if (widget.needToken) {
+                  Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(builder: (context) => Wrapper()),
+                      ModalRoute.withName("/Login"));
+                } else {
+                  Navigator.of(context).pop();
+                }
+              }),
             ],
           ),
         ),
@@ -97,51 +112,82 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     );
   }
 
-  @override
-  void initState() {
-    super.initState();
-    Library.initGetData();
-    genreList = Library.getGenreList(globals.bookCollectionData);
-    _selectedGenre = genreList[0]; //forced to the first element
+  void _loadSystemData() async {
+    if (_systemDataLoaded) return;
+    _isLoading = true;
+    if (widget.needToken) {
+      Map<String, dynamic> result = await Library.getUserToken(
+          globals.userCredential["email"], globals.userCredential["password"]);
+      if (!Library.checkUserToken(result, context)) {
+        setState(() => _isLoading = false);
+      }
+    }
+    // get user info with email
+    Map<String, dynamic> result =
+        await Library.getUserInfoWithEmail(globals.userCredential["email"]);
+    if (Library.checkUserInfo(result, context)) {
+      // get all book list
+      List<dynamic> result = await Library.getBookList();
+      if (Library.checkBookList(result, context)) {
+        // get favorite book list
+        Map<String, dynamic> result =
+            await Library.getFavoriteBooksList(globals.currentUser.id);
+        if (Library.checkFavoriteBooksList(result, context)) {
+          genreList = Library.getGenreList(globals.bookCollectionData);
+          _selectedGenre = genreList[0]; //forced to the first element
+          _systemDataLoaded = true;
+          setState(() => _isLoading = false);
+        } else {
+          setState(() => _isLoading = false);
+        }
+      } else {
+        setState(() => _isLoading = false);
+      }
+    } else {
+      setState(() => _isLoading = false);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     globals.setPortrait();
+    _loadSystemData();
 
-    return MaterialApp(
-      home: Scaffold(
-        backgroundColor: Colors.white,
-        body: Column(
-          children: <Widget>[
-            /*-- header --*/
-            globals.headerHpl(),
-            Expanded(
-              child: Column(
-                /*-- body --*/
+    return _isLoading
+        ? Loading()
+        : MaterialApp(
+            home: Scaffold(
+              backgroundColor: Colors.white,
+              body: Column(
                 children: <Widget>[
-                  Container(
-                    padding: const EdgeInsets.only(
-                      left: 10,
-                      right: 10,
-                    ),
+                  /*-- header --*/
+                  globals.headerHpl(),
+                  Expanded(
                     child: Column(
+                      /*-- body --*/
                       children: <Widget>[
-                        statusRow(flashMsg),
-                        bookRow,
-                        genreSelectRow(genreList),
+                        Container(
+                          padding: const EdgeInsets.only(
+                            left: 10,
+                            right: 10,
+                          ),
+                          child: Column(
+                            children: <Widget>[
+                              statusRow(flashMsg),
+                              bookRow,
+                              genreSelectRow(genreList),
+                            ],
+                          ),
+                        ),
+                        Expanded(
+                          child: displayBookList(_selectedGenre),
+                        ),
                       ],
                     ),
-                  ),
-                  Expanded(
-                    child: displayBookList(_selectedGenre),
                   ),
                 ],
               ),
             ),
-          ],
-        ),
-      ),
-    );
+          );
   }
 }

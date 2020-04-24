@@ -2,11 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:library_application_mobile/models/user_info.dart';
 import 'package:library_application_mobile/models/book_info.dart';
 import 'package:library_application_mobile/models/favorite_books.dart';
-import 'package:library_application_mobile/shared/loading.dart';
 import 'package:library_application_mobile/shared/globals.dart' as globals;
 import 'package:library_application_mobile/library/library.dart';
 import 'package:library_application_mobile/screens/home/book_details.dart';
-import 'package:provider/provider.dart';
 
 class BookMarkPage extends StatefulWidget {
   final UserInfo userInfo;

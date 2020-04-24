@@ -6,6 +6,7 @@ import 'package:library_application_mobile/models/favorite_books.dart';
 import 'package:library_application_mobile/models/comments.dart';
 import 'package:library_application_mobile/models/comment.dart';
 import 'package:library_application_mobile/models/book_info.dart';
+import 'package:library_application_mobile/services/storage/persistent_storage.dart';
 
 class Library {
   static String getAuthApiUrl() {
@@ -57,7 +58,7 @@ class Library {
       globals.userToken = result['token'];
       return true;
     } else {
-      if(checkKnownExceptions(result, context)) {
+      if (checkKnownExceptions(result, context)) {
         globals.showMessageDialog(context, "Unknown Error");
       }
     }
@@ -76,7 +77,7 @@ class Library {
       globals.currentUser = getCurrentUserInfo(result);
       return true;
     } else {
-      if(checkKnownExceptions(result, context)) {
+      if (checkKnownExceptions(result, context)) {
         globals.showMessageDialog(context, "Unknown Error");
       }
     }
@@ -114,17 +115,11 @@ class Library {
       globals.favoriteBooks = FavoriteBooks.fromJson(result);
       return true;
     } else {
-      if(checkKnownExceptions(result, context)) {
+      if (checkKnownExceptions(result, context)) {
         globals.showMessageDialog(context, "Unknown Error");
       }
     }
     return false;
-  }
-
-  static void initGetData() {
-    //globals.bookCollectionData = getBookCollectionData();
-    //globals.currentUser = Library.getCurrentUserInfo();
-    //globals.favoriteBooks = Library.getFavoriteBooks(globals.currentUser.id);
   }
 
   static String addTzToStoreFormat(String dateTimeString) {
@@ -145,14 +140,6 @@ class Library {
   static String convertDateTimeDisplaytoStore(String dt) {
     DateTime dateTime = DateTime.parse(dt);
     return globals.storeDateFormat.format(dateTime);
-  }
-
-  static List<BookInfo> getBookCollectionData() {
-    List<BookInfo> books = [];
-    test_data.bookData.forEach((item) {
-      books.add(BookInfo.fromJson(item));
-    });
-    return books;
   }
 
   static UserInfo getCurrentUserInfo(Map currentUserJson) {
@@ -187,6 +174,14 @@ class Library {
   }
 
 /*
+  static List<BookInfo> getBookCollectionData() {
+    List<BookInfo> books = [];
+    test_data.bookData.forEach((item) {
+      books.add(BookInfo.fromJson(item));
+    });
+    return books;
+  }
+
   static FavoriteBooks getFavoriteBooks(int uid) {
     Map<String, dynamic> bookList = test_data.favoriteBookListJson;
     return (uid == bookList["user_id"])
@@ -232,5 +227,26 @@ class Library {
     return (bi.id == comments["book_id"])
         ? Comments.fromJson(comments1)
         : Comments.empty(bi.id);
+  }
+
+  static void setUserCredential(String email, String password) {
+    globals.userCredential = {"email": email, "password": password};
+  }
+
+  static void saveUserCredential() {
+    PersistentStorage.saveData(
+        globals.userCredentialStorageTag, globals.userCredential);
+  }
+
+  static Future<bool> loadUserCredential() async {
+    globals.userCredential = Map<String, String>.from(
+        await PersistentStorage.loadSavedData(
+            globals.userCredentialStorageTag));
+    return true;
+  }
+
+  static void clearUserCredential() async {
+    PersistentStorage.clearSavedData(globals.userCredentialStorageTag);
+    globals.userCredential = {};
   }
 }

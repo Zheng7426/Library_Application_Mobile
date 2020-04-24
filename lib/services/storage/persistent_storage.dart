@@ -9,8 +9,8 @@ class PersistentStorage {
 
   static Future<Map> loadSavedData(String key) async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    String string = sharedPreferences.getString(key) ?? null;
-    Map<String, dynamic> decoded = json.decode(string);
+    String string = sharedPreferences.getString(key) ?? " ";
+    Map<String, dynamic> decoded = (string != " ") ? json.decode(string) : {};
     return decoded;
   }
 

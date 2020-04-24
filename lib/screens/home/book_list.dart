@@ -2,7 +2,6 @@ import 'package:library_application_mobile/library/library.dart';
 import 'package:library_application_mobile/models/book_info.dart';
 import 'package:library_application_mobile/screens/home/book_tile.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class BookList extends StatefulWidget {
   final String selectedGenre;
