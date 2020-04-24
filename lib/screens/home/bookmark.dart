@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:library_application_mobile/models/user_info.dart';
 import 'package:library_application_mobile/models/book_info.dart';
-import 'package:library_application_mobile/models/favorite_books.dart';
 import 'package:library_application_mobile/shared/globals.dart' as globals;
 import 'package:library_application_mobile/library/library.dart';
 import 'package:library_application_mobile/screens/home/book_details.dart';
@@ -17,7 +16,7 @@ class BookMarkPage extends StatefulWidget {
 
 class BookMarkPageState extends State<BookMarkPage> {
   final GlobalKey<BookDetailsPageState> _key = GlobalKey();
-  FavoriteBooks _favoriteBooks = null;
+  bool _isLoading = false;
 
   Widget showTitle() {
     return Container(
@@ -36,15 +35,23 @@ class BookMarkPageState extends State<BookMarkPage> {
     );
   }
 
-  Widget showBookList() {
+  Widget showEmptyListMessage() {
+    return Container(
+      margin: EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 0.0),
+      child: Text("You don't have any favorite book yet",
+          style: globals.ts(18.0, Colors.black, FontWeight.w500)),
+    );
+  }
+
+  Widget showBookList(bool enabled) {
     int uid = widget.userInfo.id;
     return ListView.builder(
       scrollDirection: Axis.vertical,
       shrinkWrap: true,
       itemCount: globals.favoriteBooks.bookIdList.length,
       itemBuilder: (context, index) {
-        BookInfo bookInfo =
-            Library.getBookDataFromBookId(globals.favoriteBooks.bookIdList[index]);
+        BookInfo bookInfo = Library.getBookDataFromBookId(
+            globals.favoriteBooks.bookIdList[index]);
         return Card(
           margin: EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 6.0),
           child: Column(
@@ -56,32 +63,42 @@ class BookMarkPageState extends State<BookMarkPage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: <Widget>[
-                  globals.styledRaisedButton(
-                      "Show", 15.0, Colors.black54, Colors.white, () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => BookDetailsPage(
-                          key: _key,
-                          bookInfo: bookInfo,
-                        ),
-                      ),
-                    );
-                  }),
-                  SizedBox(width: 5),
-                  Library.isFavoriteBook(uid, bookInfo.id)
+                  enabled
                       ? globals.styledRaisedButton(
-                          "Unfavorite", 15.0, Colors.amber, Colors.black, () {
-                          setState(() {
-                            Library.removeFavoriteBook(uid, bookInfo.id);
-                          });
+                          "Show", 15.0, Colors.black54, Colors.white, () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => BookDetailsPage(
+                                key: _key,
+                                bookInfo: bookInfo,
+                              ),
+                            ),
+                          );
                         })
                       : globals.styledRaisedButton(
-                          "Favorite", 15.0, Colors.green, Colors.white, () {
-                          setState(() {
-                            Library.addFavoriteBook(uid, bookInfo.id);
-                          });
-                        }),
+                          "Show", 15.0, Colors.black54, Colors.white, null),
+                  SizedBox(width: 5),
+                  enabled
+                      ? globals.styledRaisedButton(
+                          "Unfavorite", 15.0, Colors.amber, Colors.black,
+                          () async {
+                          setState(() => _isLoading = true);
+                          Map<String, dynamic> result =
+                              await Library.removeFavoriteBookAtServer(
+                                  bookInfo.id);
+                          if (Library.checkRemoveFavoriteBookAtServer(
+                              result, context)) {
+                            setState(() {
+                              Library.removeFavoriteBook(uid, bookInfo.id);
+                              _isLoading = false;
+                            });
+                          } else {
+                            setState(() => _isLoading = false);
+                          }
+                        })
+                      : globals.styledRaisedButton(
+                          "Unfavorite", 15.0, Colors.amber, Colors.black, null),
                   SizedBox(width: 5),
                 ],
               )
@@ -109,7 +126,9 @@ class BookMarkPageState extends State<BookMarkPage> {
           globals.headerHpl(),
           showTitle(),
           Expanded(
-            child: showBookList(),
+            child: Library.isBookMarkEmpty(widget.userInfo.id)
+                ? showEmptyListMessage()
+                : showBookList(!_isLoading),
           ),
         ]),
       ),

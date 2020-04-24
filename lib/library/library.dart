@@ -25,6 +25,10 @@ class Library {
     return "${globals.libraryApplicationUrl}${globals.bookmarkApi}${uid}";
   }
 
+  static String getBookmarksBookUrl(int bookId) {
+    return "${globals.libraryApplicationUrl}${globals.bookmarkApi}${bookId}";
+  }
+
   static Map<String, dynamic> prepareTokenQueryParam(
       String email, String password) {
     return {"user[email]": email, "user[password]": password};
@@ -197,6 +201,23 @@ class Library {
     return false;
   }
 
+  static Future<Map<String, dynamic>> addFavoriteBookAtServer(
+      int bookId) async {
+    Map<String, dynamic> result = await globals.httpService.httpRequest(
+        "PUT", getBookmarksBookUrl(bookId),
+        token: globals.userToken);
+    return result;
+  }
+
+  static bool checkAddFavoriteBookAtServer(
+      Map<String, dynamic> result, BuildContext context) {
+    if (!checkKnownExceptions(result, context)) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
   static bool removeFavoriteBook(int uid, int bid) {
     if (uid == globals.favoriteBooks.userId) {
       if (globals.favoriteBooks.bookIdList.contains(bid)) {
@@ -207,11 +228,37 @@ class Library {
     return false;
   }
 
+  static Future<Map<String, dynamic>> removeFavoriteBookAtServer(
+      int bookId) async {
+    Map<String, dynamic> result = await globals.httpService.httpRequest(
+        "DELETE", getBookmarksBookUrl(bookId),
+        token: globals.userToken);
+    return result;
+  }
+
+  static bool checkRemoveFavoriteBookAtServer(
+      Map<String, dynamic> result, BuildContext context) {
+    if (!checkKnownExceptions(result, context)) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
   static bool isFavoriteBook(int uid, int bid) {
     if (uid == globals.favoriteBooks.userId) {
       return globals.favoriteBooks.bookIdList.contains(bid);
     }
     return false;
+  }
+
+  static bool isBookMarkEmpty(int uid) {
+    if (uid == globals.favoriteBooks.userId) {
+      if (globals.favoriteBooks.bookIdList.isNotEmpty) {
+        return false;
+      }
+    }
+    return true;
   }
 
   static Comments getBookComments(BookInfo bi) {

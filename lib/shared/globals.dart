@@ -17,13 +17,12 @@ const bookmarkApi = 'api/bookmarks/';
 
 const userCredentialStorageTag = 'USER_CREDENTIAL';
 
-
 final displayDateFormat = DateFormat('yyyy-MM-dd hh:mm:ss');
 final storeDateFormat = DateFormat('yyyy-MM-dd hh:mm:ss.sss');
 
 HttpService httpService;
 String userToken;
-Map<String,String> userCredential;
+Map<String, String> userCredential;
 UserInfo currentUser = null;
 FavoriteBooks favoriteBooks = null;
 List<BookInfo> bookCollectionData = null;
@@ -60,9 +59,11 @@ Widget styledRaisedButton(
         color: kColor,
       ),
     ),
-    onPressed: () {
-      func();
-    },
+    onPressed: func == null
+        ? null
+        : () {
+            func();
+          },
     child: Text(
       text,
       style: ts(size, wColor, FontWeight.w400),
@@ -129,4 +130,3 @@ Widget headerHpl() {
     ),
   );
 }
-
