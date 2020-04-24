@@ -3,8 +3,8 @@ import 'package:library_application_mobile/models/book_info.dart';
 import 'package:library_application_mobile/models/comments.dart';
 import 'package:library_application_mobile/models/comment.dart';
 import 'package:library_application_mobile/shared/globals.dart' as globals;
+import 'package:library_application_mobile/shared/loading.dart';
 import 'package:library_application_mobile/library/library.dart';
-
 
 class BookDetailsPage extends StatefulWidget {
   final BookInfo bookInfo;
@@ -20,10 +20,11 @@ class BookDetailsPageState extends State<BookDetailsPage> {
   TextEditingController _addNoteController = new TextEditingController();
   Comments comments;
   Comment _comment = null;
+  bool _isLoading = false;
+  bool _isCommentsLoaded = false;
 
   @override
   void initState() {
-    comments = Library.getBookComments(widget.bookInfo);
     super.initState();
   }
 
@@ -32,6 +33,18 @@ class BookDetailsPageState extends State<BookDetailsPage> {
     _addTitleController.dispose();
     _addNoteController.dispose();
     super.dispose();
+  }
+
+  void _getComments(BuildContext context, int bookId) async {
+    if (_isCommentsLoaded) return;
+    setState(() => _isLoading = true);
+    List<dynamic> result = await Library.getBookCommentsFromServer(bookId);
+    comments = Library.checkBookCommentsFromServer(result, context, bookId);
+    if (comments == null) {
+      comments = Comments.empty(bookId); //Sanity checking
+    }
+    setState(() => _isLoading = false);
+    _isCommentsLoaded = true;
   }
 
   Widget displayTitle(String s) {
@@ -103,24 +116,36 @@ class BookDetailsPageState extends State<BookDetailsPage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              globals.styledRaisedButton(
-                  "Add Note", 15.0, Colors.blue, Colors.white, () {
-                setState(() {
-                  _comment = Comment.construct(
-                    _addTitleController.text,
-                    _addNoteController.text,
-                    Library.getCurrentTime(),
-                  );
-                  comments.comments.add(_comment);
-                  _addTitleController.text = '';
-                  _addNoteController.text = '';
-                  FocusScope.of(context).requestFocus(FocusNode());
-                });
-              }),
-              globals.styledRaisedButton(
-                  "Back", 15.0, Colors.green, Colors.white, () {
-                Navigator.of(context).pop();
-              }),
+              _isLoading
+                  ? globals.styledRaisedButton(
+                      "Add Note", 15.0, Colors.blue, Colors.white, null)
+                  : globals.styledRaisedButton(
+                      "Add Note", 15.0, Colors.blue, Colors.white, () async {
+                      _comment = Comment.construct(
+                        _addTitleController.text,
+                        _addNoteController.text,
+                        Library.getCurrentTime(),
+                      );
+                      setState(() => _isLoading = true);
+                      Map<String, dynamic> result =
+                          await Library.addBookCommentsToServer(
+                              widget.bookInfo.id, _comment);
+                      if (Library.checkaddBookCommentsToServer(
+                          result, context)) {
+                        comments.comments.add(_comment);
+                        _addTitleController.text = '';
+                        _addNoteController.text = '';
+                        FocusScope.of(context).requestFocus(FocusNode());
+                      }
+                      setState(() => _isLoading = false);
+                    }),
+              _isLoading
+                  ? globals.styledRaisedButton(
+                      "Add Note", 15.0, Colors.blue, Colors.white, null)
+                  : globals.styledRaisedButton(
+                      "Back", 15.0, Colors.green, Colors.white, () {
+                      Navigator.of(context).pop();
+                    }),
             ],
           )
         ],
@@ -165,21 +190,24 @@ class BookDetailsPageState extends State<BookDetailsPage> {
   @override
   Widget build(BuildContext context) {
     globals.setPortrait();
+    _getComments(context, widget.bookInfo.id);
 
-    return MaterialApp(
-      home: Scaffold(
-        backgroundColor: Colors.white,
-        body: Column(
-          children: <Widget>[
-            globals.headerHpl(),
-            showBookDetails(widget.bookInfo),
-            showAddCommentBlock(),
-            Expanded(
-              child: showComments(),
+    return _isLoading
+        ? Loading()
+        : MaterialApp(
+            home: Scaffold(
+              backgroundColor: Colors.white,
+              body: Column(
+                children: <Widget>[
+                  globals.headerHpl(),
+                  showBookDetails(widget.bookInfo),
+                  showAddCommentBlock(),
+                  Expanded(
+                    child: showComments(),
+                  ),
+                ],
+              ),
             ),
-          ],
-        ),
-      ),
-    );
+          );
   }
 }

@@ -29,9 +29,26 @@ class Library {
     return "${globals.libraryApplicationUrl}${globals.bookmarkApi}${bookId}";
   }
 
+  static String getCommentsUrl(int bookId) {
+    return "${globals.libraryApplicationUrl}${globals.commentsApi}${bookId}";
+  }
+
+  static String getAddCommentsUrl() {
+    return "${globals.libraryApplicationUrl}${globals.commentsApi}";
+  }
+
   static Map<String, dynamic> prepareTokenQueryParam(
       String email, String password) {
     return {"user[email]": email, "user[password]": password};
+  }
+
+  static Map<String, dynamic> prepareAddCommentsParam(
+      int bookId, Comment comment) {
+    return {
+      "comment[book_id]": bookId,
+      "comment[title]": comment.title,
+      "comment[note]": comment.note
+    };
   }
 
   static Future<Map<String, dynamic>> getUserToken(
@@ -261,19 +278,66 @@ class Library {
     return true;
   }
 
-  static Comments getBookComments(BookInfo bi) {
-    Map<String, dynamic> comments = test_data.bookCommentListJson;
+  static Future<List<dynamic>> getBookCommentsFromServer(int bookId) async {
+    List<dynamic> result = await globals.httpService
+        .httpRequest("GET", getCommentsUrl(bookId), token: globals.userToken);
+    return result;
+  }
+
+  static Comments checkBookCommentsFromServer(
+      List<dynamic> result, BuildContext context, int bookId) {
+    if (!checkKnownExceptions(result[0], context)) {
+      return null;
+    } else {
+      return getBookCommentsFromList(
+          bookId, List<Map<String, dynamic>>.from(result));
+    }
+  }
+
+  static Comments getBookCommentsFromList(
+      int bookId, List<Map<String, dynamic>> comments) {
     Map<String, dynamic> comments1 = Map<String, dynamic>();
-    if (bi.id == comments["book_id"]) {
+    comments1["book_id"] = bookId;
+    comments1["comments"] = [];
+    comments.forEach((item) {
+      if (comments1["book_id"] == item["book_id"]) {
+        comments1["comments"].add(Comment.fromJson(item));
+      }
+    });
+    return Comments.fromJson(comments1);
+  }
+
+  static Comments getBookComments(int bookId, Map<String, dynamic> comments) {
+    //Map<String, dynamic> comments = test_data.bookCommentListJson;
+    Map<String, dynamic> comments1 = Map<String, dynamic>();
+    if (bookId == comments["book_id"]) {
       comments1["book_id"] = comments["book_id"];
       comments1["comments"] = [];
       comments["comments"].forEach((item) {
         comments1["comments"].add(Comment.fromJson(item));
       });
     }
-    return (bi.id == comments["book_id"])
+    return (bookId == comments["book_id"])
         ? Comments.fromJson(comments1)
-        : Comments.empty(bi.id);
+        : Comments.empty(bookId);
+  }
+
+  static Future<Map<String, dynamic>> addBookCommentsToServer(
+      int bookId, Comment comment) async {
+    Map<String, dynamic> result = await globals.httpService.httpRequest(
+        "POST", getAddCommentsUrl(),
+        params: prepareAddCommentsParam(bookId, comment),
+        token: globals.userToken);
+    return result;
+  }
+
+  static bool checkaddBookCommentsToServer(
+      Map<String, dynamic> result, BuildContext context) {
+    if (!checkKnownExceptions(result, context)) {
+      return false;
+    } else {
+      return true;
+    }
   }
 
   static void setUserCredential(String email, String password) {

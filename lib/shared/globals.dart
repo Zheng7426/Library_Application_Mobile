@@ -14,6 +14,7 @@ const authApi = 'api/auth/';
 const bookBaseApi = 'api/books/';
 const usersApi = 'api/users';
 const bookmarkApi = 'api/bookmarks/';
+const commentsApi = 'api/comments/';
 
 const userCredentialStorageTag = 'USER_CREDENTIAL';
 
