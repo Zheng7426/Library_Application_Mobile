@@ -105,7 +105,7 @@ class BookDetailsPageState extends State<BookDetailsPage> {
             controller: _addNoteController,
             style: globals.ts(18.0, Colors.black, FontWeight.w200),
             keyboardType: TextInputType.multiline,
-            maxLines: 2,
+            maxLines: 1,
             decoration: const InputDecoration(
               hintText: "Something about the book...",
               border: OutlineInputBorder(),
@@ -124,6 +124,7 @@ class BookDetailsPageState extends State<BookDetailsPage> {
                       _comment = Comment.construct(
                         _addTitleController.text,
                         _addNoteController.text,
+                        globals.userCredential["email"],
                         Library.getCurrentTime(),
                       );
                       setState(() => _isLoading = true);
@@ -177,8 +178,11 @@ class BookDetailsPageState extends State<BookDetailsPage> {
               ),
               Text(
                   Library.convertDateTimeStoreToDisplay(comments
-                      .comments[comments.comments.length - index - 1]
-                      .createTime),
+                          .comments[comments.comments.length - index - 1]
+                          .createTime) +
+                      Library.showEmail(comments
+                          .comments[comments.comments.length - index - 1]
+                          .email),
                   style: globals.ts(12.0, Colors.white, FontWeight.w100)),
             ],
           ),

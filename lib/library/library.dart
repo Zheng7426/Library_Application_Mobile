@@ -340,6 +340,10 @@ class Library {
     }
   }
 
+  static String showEmail(String email) {
+      return (email==null) ? '': " by $email";
+  }
+
   static void setUserCredential(String email, String password) {
     globals.userCredential = {"email": email, "password": password};
   }
