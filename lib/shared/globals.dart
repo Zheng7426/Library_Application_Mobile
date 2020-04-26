@@ -10,6 +10,7 @@ import 'package:library_application_mobile/services/http_service/http_request.da
 
 const libraryApplicationUrl =
     'https://library-application-rails-2.herokuapp.com/';
+    //'http://10.0.2.2:3000/';
 const authApi = 'api/auth/';
 const bookBaseApi = 'api/books/';
 const usersApi = 'api/users';

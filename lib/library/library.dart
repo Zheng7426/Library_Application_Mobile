@@ -286,7 +286,7 @@ class Library {
 
   static Comments checkBookCommentsFromServer(
       List<dynamic> result, BuildContext context, int bookId) {
-    if (!checkKnownExceptions(result[0], context)) {
+    if (result.isEmpty || !checkKnownExceptions(result[0], context)) {
       return null;
     } else {
       return getBookCommentsFromList(
@@ -341,7 +341,7 @@ class Library {
   }
 
   static String showEmail(String email) {
-      return (email==null) ? '': " by $email";
+    return (email == null) ? '' : " by $email";
   }
 
   static void setUserCredential(String email, String password) {
